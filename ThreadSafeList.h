@@ -2,9 +2,9 @@
 #define THREAD_SAFE_LIST_H_
 
 #include <pthread.h>
+// #include <mutex>
 #include <iostream>
 #include <iomanip> // std::setw
-
 using namespace std;
 
 template <typename T>
@@ -14,19 +14,69 @@ class List
         /**
          * Constructor
          */
-        List() { //TODO: add your implementation }
+        List() {
+            this->size = 0;
+            this->head = nullptr;
+        }
 
         /**
          * Destructor
          */
-        ~List(){ //TODO: add your implementation }
+        ~List() {
+            // this->size = 0;
+            Node* cur = head;
+            while (cur != nullptr) {
+                Node* tmp = cur;
+                cur = cur->next;
+                delete tmp;
+            }
+        }
 
         class Node {
          public:
           T data;
           Node *next;
-          // TODO: Add your methods and data members
+          pthread_mutex_t mtx;
+
+          Node(T _data) {
+              data = _data;
+              next = nullptr;
+          };
+
+          void lock() {
+              pthread_mutex_lock(&mtx);
+          }
+
+          void unlock() {
+              pthread_mutex_unlock(&mtx);
+          }
         };
+
+        Node* findPlace2(const T& data) {
+            Node* cur = head;
+            if (cur == nullptr) return  cur;
+            while (cur->next != nullptr && cur->next->data != data) {
+                cur = cur->next;
+            }
+            return cur;
+        }
+
+        Node* findPlace(const T& data) {
+            Node* cur = head;
+            cur->lock();
+
+            while (cur->next != nullptr && cur->next->data < data) {
+                cur->next->lock();
+                /* if (data >= cur->next->data) {
+                    return cur; // cur and cur->next are locked
+                }*/
+
+                // cur->unlock();
+                cur = cur->next;
+            }
+
+            return cur;
+        }
 
         /**
          * Insert new node to list while keeping the list ordered in an ascending order
@@ -35,7 +85,36 @@ class List
          * @return true if a new node was added and false otherwise
          */
         bool insert(const T& data) {
-			//TODO: add your implementation
+            Node* toAdd = new Node(data);
+            if (head == nullptr) { // first node
+                head = toAdd;
+                return true;
+            }
+            if (head->data > data) { // new node is the first
+                Node* tmp = head;
+                toAdd->next = tmp;
+                head = toAdd;
+                return true;
+            }
+
+            Node* prev = findPlace(data);
+            if (prev->next != nullptr && prev->next->data == data) { // Already exists
+                delete toAdd;
+                return false;
+            }
+            toAdd->next = prev->next;
+            prev->next = toAdd;
+
+            return true;
+        }
+
+        void myPrint() {
+            Node* cur = head;
+            while (cur != nullptr) {
+                cout << "num: " << cur->data << " ";
+                cur = cur->next;
+            }
+            cout << "\n";
         }
 
         /**
@@ -44,7 +123,19 @@ class List
          * @return true if a matched node was found and removed and false otherwise
          */
         bool remove(const T& value) {
-			//TODO: add your implementation
+            if (head->data == value) { // delete head
+                Node* node = head;
+                head = head->next;
+                delete node;
+                return true;
+            }
+
+            Node* prev = findPlace2(value);
+            if (prev == nullptr) return false;
+            Node* toDelete = prev->next;
+            prev->next = toDelete->next;
+            delete toDelete;
+            return true;
         }
 
         /**
@@ -52,7 +143,7 @@ class List
          * @return current size of the list
          */
         unsigned int getSize() {
-			//TODO: add your implementation
+            return this->size;
         }
 
 		// Don't remove
@@ -85,6 +176,7 @@ class List
 
     private:
         Node* head;
+        int size;
     // TODO: Add your own methods and data members
 };
 

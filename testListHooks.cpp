@@ -26,7 +26,7 @@ class MyList : public List<T> {
   int val_to_remove = 0;
 };
 
-int main() {
+int main2() {
   List<int>* l = new MyList<int>();
   for (int i=0; i<20; i+=2) {
     l->insert(i);
