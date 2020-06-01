@@ -5,6 +5,7 @@
 
 class Barrier {
 public:
+    x
     Barrier(unsigned int num_of_threads);
     void wait();
     ~Barrier();
