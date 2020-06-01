@@ -55,9 +55,23 @@ class List
         Node* findPlace2(const T& data) {
             Node* cur = head;
             if (cur == nullptr) return  cur;
+            cur->lock();
+
             while (cur->next != nullptr && cur->next->data != data) {
+                cur->unlock();
                 cur = cur->next;
+                cur->lock();
             }
+
+            if (cur->next == nullptr) { // got to end of list
+                cur->unlock();
+            }
+            else if (cur->next->data == data) {
+                if (cur->next->next != nullptr) {
+                    cur->next->lock();
+                }
+            }
+
             return cur;
         }
 
@@ -67,12 +81,18 @@ class List
 
             while (cur->next != nullptr && cur->next->data < data) {
                 cur->next->lock();
-                /* if (data >= cur->next->data) {
+                // cur->next == nullptr ||
+                if (cur->next->data >= data) {
                     return cur; // cur and cur->next are locked
-                }*/
+                }
 
-                // cur->unlock();
-                cur = cur->next;
+                cur->unlock();
+                cur = cur->next; // Was locked already
+            }
+
+            if (cur->next == nullptr) { // got to end of list
+                cur->unlock();
+                return cur;
             }
 
             return cur;
@@ -99,12 +119,16 @@ class List
 
             Node* prev = findPlace(data);
             if (prev->next != nullptr && prev->next->data == data) { // Already exists
+                prev->unlock();
+                prev->next->unlock();
                 delete toAdd;
                 return false;
             }
+
             toAdd->next = prev->next;
             prev->next = toAdd;
-
+            prev->unlock();
+            toAdd->next->unlock();
             return true;
         }
 
@@ -134,6 +158,8 @@ class List
             if (prev == nullptr) return false;
             Node* toDelete = prev->next;
             prev->next = toDelete->next;
+            prev->unlock();
+            if (prev->next != nullptr) prev->next->unlock();
             delete toDelete;
             return true;
         }
