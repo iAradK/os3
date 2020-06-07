@@ -1,7 +1,7 @@
 #include <iostream>
 #include "ThreadSafeList.h"
 
-int main() {
+int main3() {
     List<int> lst;
     cout << "aaa \n";
     lst.insert(5);

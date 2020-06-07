@@ -21,6 +21,7 @@ class List
             this->demi_head = new Node(DEMVAL);
             this->head = nullptr;
             this->demi_head->next = head;
+            pthread_mutex_init(&this->size_mtx, NULL);
         }
 
         /**
@@ -34,6 +35,7 @@ class List
                 cur = cur->next;
                 delete tmp;
             }
+            delete demi_head;
         }
 
         class Node {
@@ -42,9 +44,10 @@ class List
           Node *next;
           pthread_mutex_t mtx;
 
-          Node(T _data) {
-              data = _data;
-              next = nullptr;
+            Node(T _data) {
+                pthread_mutex_init(&this->mtx, NULL);
+                data = _data;
+                next = nullptr;
           };
 
           void lock() {
@@ -136,7 +139,7 @@ class List
 
             if (cur->next != nullptr && cur->next->data == data) { // Already exists
                 cur->unlock();
-                if (toAdd->next != NULL) cur->next->unlock();
+                if (cur->next != NULL) cur->next->unlock();
                 delete toAdd;
                 return false;
             }

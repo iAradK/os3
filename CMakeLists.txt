@@ -3,4 +3,6 @@ project(hw3)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(hw3 main.cpp Barrier.h testListHooks.cpp ThreadSafeList.h HeavyThreadsTest.cpp)
+add_executable(hw3 main.cpp Barrier.h testListHooks.cpp ThreadSafeList.h listTest.cpp)
+
+set(CMAKE_CXX_FLAGS -pthread)
