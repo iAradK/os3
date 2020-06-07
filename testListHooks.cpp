@@ -26,14 +26,13 @@ class MyList : public List<T> {
   int val_to_remove = 0;
 };
 
-int main2() {
-  List<int>* l = new MyList<int>();
-  for (int i=0; i<20; i+=2) {
-    l->insert(i);
-  }
-  l->print(); // should print: 0,2,4,6,8,10,12,14,16,18
-  assert(l->getSize() == 10);
-
+int main() {
+    List<int>* l = new MyList<int>();
+    for (int i=0; i<20; i+=2) {
+        l->insert(i);
+    }
+    l->print(); // should print: 0,2,4,6,8,10,12,14,16,18
+    assert(l->getSize() == 10);
   // the node to be removed should be a pred of the one being inserted
   // because hand locks are already acquired on the inserted node
   ((MyList<int>*)l)->activateHook(10);

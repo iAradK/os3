@@ -106,7 +106,7 @@ void insert_test_behavior(List<int>* l){
     pthread_mutex_destroy(&results_mutex);
 }*/
 
-int main() {
+int main13() {
     double time_stamp = 0;
     time_t start_time, end_time;
     if(time(&start_time) != -1){
@@ -115,7 +115,7 @@ int main() {
 
     srand(time(NULL));                          //for random numbers in tests
     cout << "Start testing ThreadSafeList" << endl;
-    for(int i = 1 ; i<=1000 ; i++) {                  // TODO set the number of tests you need
+    for(int i = 1 ; i<=30 ; i++) {                  // TODO set the number of tests you need
 //        std::cout << "Start Test number: " << i << std::endl;     //TODO remove comments if you want to print. ! will increase your tests time !
 //        std::cout
 //                << "########################################################################### \n"
@@ -137,30 +137,3 @@ int main() {
   return 0;
 }
 
-/*
-/// for testing only  // TODO: add this func to "ThreadSafeList.h" and make adjustments before the test, don't forget to remove before submit
-    bool isSorted(){
-        pthread_mutex_lock(&dummy_mutex);
-        if(!head) {
-            pthread_mutex_unlock(&dummy_mutex);
-            return true;
-        }else{
-            pthread_mutex_lock(&head->mutex);
-            pthread_mutex_unlock(&dummy_mutex);
-        }
-        Node* prev = head;
-        Node* curr = head->next;
-        while(curr) {
-            pthread_mutex_lock(&curr->mutex);
-            if(prev->data >= curr->data) {
-                pthread_mutex_unlock(&curr->mutex);
-                pthread_mutex_unlock(&prev->mutex);
-                return false;
-            }
-            pthread_mutex_unlock(&prev->mutex);
-            prev = curr;
-            curr = curr->next;
-        }
-        pthread_mutex_unlock(&prev->mutex);
-        return true;
-    }*/

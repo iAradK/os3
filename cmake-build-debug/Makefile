@@ -123,6 +123,33 @@ hw3/fast:
 	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/build
 .PHONY : hw3/fast
 
+HeavyThreadsTest.o: HeavyThreadsTest.cpp.o
+
+.PHONY : HeavyThreadsTest.o
+
+# target to build an object file
+HeavyThreadsTest.cpp.o:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.o
+.PHONY : HeavyThreadsTest.cpp.o
+
+HeavyThreadsTest.i: HeavyThreadsTest.cpp.i
+
+.PHONY : HeavyThreadsTest.i
+
+# target to preprocess a source file
+HeavyThreadsTest.cpp.i:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.i
+.PHONY : HeavyThreadsTest.cpp.i
+
+HeavyThreadsTest.s: HeavyThreadsTest.cpp.s
+
+.PHONY : HeavyThreadsTest.s
+
+# target to generate assembly for a file
+HeavyThreadsTest.cpp.s:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.s
+.PHONY : HeavyThreadsTest.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... hw3"
 	@echo "... edit_cache"
+	@echo "... HeavyThreadsTest.o"
+	@echo "... HeavyThreadsTest.i"
+	@echo "... HeavyThreadsTest.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -1,6 +1,8 @@
 #ifndef THREAD_SAFE_LIST_H_
 #define THREAD_SAFE_LIST_H_
 
+#define DEMVAL 0
+
 #include <pthread.h>
 // #include <mutex>
 #include <iostream>
@@ -16,7 +18,9 @@ class List
          */
         List() {
             this->size = 0;
+            this->demi_head = new Node(DEMVAL);
             this->head = nullptr;
+            this->demi_head->next = head;
         }
 
         /**
@@ -58,12 +62,14 @@ class List
             cur->lock();
 
             while (cur->next != nullptr && cur->next->data != data) {
+                // __remove_test_hook();
                 cur->unlock();
                 cur = cur->next;
                 cur->lock();
             }
 
             if (cur->next == nullptr) { // got to end of list
+                // __remove_test_hook();
                 cur->unlock();
             }
             else if (cur->next->data == data) {
@@ -86,16 +92,27 @@ class List
                     return cur; // cur and cur->next are locked
                 }
 
+                // __insert_test_hook();
                 cur->unlock();
                 cur = cur->next; // Was locked already
             }
 
             if (cur->next == nullptr) { // got to end of list
+                __insert_test_hook();
                 cur->unlock();
                 return cur;
             }
 
             return cur;
+        }
+
+        void chnge_size(bool dec) {
+            pthread_mutex_lock(&this->size_mtx);
+            if (dec == false) { // Increase size
+                this->size++;
+            }
+            else this->size--; // Dec size
+            pthread_mutex_unlock(&this->size_mtx);
         }
 
         /**
@@ -106,29 +123,31 @@ class List
          */
         bool insert(const T& data) {
             Node* toAdd = new Node(data);
-            if (head == nullptr) { // first node
-                head = toAdd;
-                return true;
-            }
-            if (head->data > data) { // new node is the first
-                Node* tmp = head;
-                toAdd->next = tmp;
-                head = toAdd;
-                return true;
+            Node* cur = demi_head;
+
+            cur->lock();
+            while (cur->next != nullptr) {
+                cur->next->lock();
+                if (cur->next->data >= data) break;
+                // Node* prev = cur;
+                cur->unlock();
+                cur = cur->next;
             }
 
-            Node* prev = findPlace(data);
-            if (prev->next != nullptr && prev->next->data == data) { // Already exists
-                prev->unlock();
-                prev->next->unlock();
+            if (cur->next != nullptr && cur->next->data == data) { // Already exists
+                cur->unlock();
+                if (toAdd->next != NULL) cur->next->unlock();
                 delete toAdd;
                 return false;
             }
 
-            toAdd->next = prev->next;
-            prev->next = toAdd;
-            prev->unlock();
-            toAdd->next->unlock();
+            toAdd->next = cur->next;
+            cur->next = toAdd;
+            chnge_size(0);
+            if (cur == demi_head) head = toAdd;
+            __insert_test_hook();
+            cur->unlock();
+            if (toAdd->next != NULL) toAdd->next->unlock();
             return true;
         }
 
@@ -147,19 +166,28 @@ class List
          * @return true if a matched node was found and removed and false otherwise
          */
         bool remove(const T& value) {
-            if (head->data == value) { // delete head
-                Node* node = head;
-                head = head->next;
-                delete node;
-                return true;
+            Node* cur = demi_head;
+            cur->lock();
+
+            while (cur->next != nullptr) {
+                cur->next->lock();
+                if (cur->next->data == value) break;
+                cur->unlock();
+                cur = cur->next;
             }
 
-            Node* prev = findPlace2(value);
-            if (prev == nullptr) return false;
-            Node* toDelete = prev->next;
-            prev->next = toDelete->next;
-            prev->unlock();
-            if (prev->next != nullptr) prev->next->unlock();
+            if (cur->next == nullptr) {
+                cur->unlock();
+                return false;
+            }
+
+            Node* toDelete = cur->next;
+            cur->next = toDelete->next;
+            if (cur == demi_head) head = cur->next; // If we deleted the head
+            chnge_size(1);
+            __remove_test_hook();
+            cur->unlock();
+            if (cur->next != nullptr) cur->next->unlock();
             delete toDelete;
             return true;
         }
@@ -200,9 +228,41 @@ class List
 		// Don't remove
         virtual void __remove_test_hook() {}
 
+    pthread_mutex_t dummy_mutex;
+
+    /// for testing only  // TODO: add this func to "ThreadSafeList.h" and make adjustments before the test, don't forget to remove before submit
+    bool isSorted(){
+        pthread_mutex_lock(&dummy_mutex);
+        if(!head) {
+            pthread_mutex_unlock(&dummy_mutex);
+            return true;
+        }else{
+            pthread_mutex_lock(&head->mtx);
+            pthread_mutex_unlock(&dummy_mutex);
+        }
+        Node* prev = head;
+        Node* curr = head->next;
+        while(curr) {
+            pthread_mutex_lock(&curr->mtx);
+            if(prev->data >= curr->data) {
+                pthread_mutex_unlock(&curr->mtx);
+                pthread_mutex_unlock(&prev->mtx);
+                return false;
+            }
+            pthread_mutex_unlock(&prev->mtx);
+            prev = curr;
+            curr = curr->next;
+        }
+        pthread_mutex_unlock(&prev->mtx);
+        return true;
+    }
+
     private:
+        Node* demi_head;
         Node* head;
         int size;
+        pthread_mutex_t size_mtx;
+
     // TODO: Add your own methods and data members
 };
 
