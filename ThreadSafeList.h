@@ -109,8 +109,8 @@ public:
         }
 
         if (cur->next != nullptr && cur->next->data == data) { // Already exists
-            cur->unlock();
             if (cur->next != NULL) cur->next->unlock();
+            cur->unlock();
             delete toAdd;
             return false;
         }
@@ -120,8 +120,8 @@ public:
         chnge_size(0);
         if (cur == demi_head) head = toAdd;
         __insert_test_hook();
-        cur->unlock();
         if (toAdd->next != NULL) toAdd->next->unlock();
+        cur->unlock();
         return true;
     }
 
