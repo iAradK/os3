@@ -87,10 +87,10 @@
 		<Unit filename="/home/student/Desktop/hw3/Barrier.h">
 			<Option target="hw3"/>
 		</Unit>
-		<Unit filename="/home/student/Desktop/hw3/ThreadSafeList.h">
+		<Unit filename="/home/student/Desktop/hw3/HeavyThreadsTest.cpp">
 			<Option target="hw3"/>
 		</Unit>
-		<Unit filename="/home/student/Desktop/hw3/listTest.cpp">
+		<Unit filename="/home/student/Desktop/hw3/ThreadSafeList.h">
 			<Option target="hw3"/>
 		</Unit>
 		<Unit filename="/home/student/Desktop/hw3/main.cpp">

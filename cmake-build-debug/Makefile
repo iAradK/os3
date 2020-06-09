@@ -123,32 +123,32 @@ hw3/fast:
 	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/build
 .PHONY : hw3/fast
 
-listTest.o: listTest.cpp.o
+HeavyThreadsTest.o: HeavyThreadsTest.cpp.o
 
-.PHONY : listTest.o
+.PHONY : HeavyThreadsTest.o
 
 # target to build an object file
-listTest.cpp.o:
-	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/listTest.cpp.o
-.PHONY : listTest.cpp.o
+HeavyThreadsTest.cpp.o:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.o
+.PHONY : HeavyThreadsTest.cpp.o
 
-listTest.i: listTest.cpp.i
+HeavyThreadsTest.i: HeavyThreadsTest.cpp.i
 
-.PHONY : listTest.i
+.PHONY : HeavyThreadsTest.i
 
 # target to preprocess a source file
-listTest.cpp.i:
-	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/listTest.cpp.i
-.PHONY : listTest.cpp.i
+HeavyThreadsTest.cpp.i:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.i
+.PHONY : HeavyThreadsTest.cpp.i
 
-listTest.s: listTest.cpp.s
+HeavyThreadsTest.s: HeavyThreadsTest.cpp.s
 
-.PHONY : listTest.s
+.PHONY : HeavyThreadsTest.s
 
 # target to generate assembly for a file
-listTest.cpp.s:
-	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/listTest.cpp.s
-.PHONY : listTest.cpp.s
+HeavyThreadsTest.cpp.s:
+	$(MAKE) -f CMakeFiles/hw3.dir/build.make CMakeFiles/hw3.dir/HeavyThreadsTest.cpp.s
+.PHONY : HeavyThreadsTest.cpp.s
 
 main.o: main.cpp.o
 
@@ -213,9 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... hw3"
 	@echo "... edit_cache"
-	@echo "... listTest.o"
-	@echo "... listTest.i"
-	@echo "... listTest.s"
+	@echo "... HeavyThreadsTest.o"
+	@echo "... HeavyThreadsTest.i"
+	@echo "... HeavyThreadsTest.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

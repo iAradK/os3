@@ -25,6 +25,7 @@ public:
         this->head_mtx = new pthread_mutex_t();
         pthread_mutex_init(this->size_mtx, NULL);
         pthread_mutex_init(this->head_mtx, NULL);
+        pthread_mutex_init(&this->dummy_mutex, NULL);
     }
 
     /**
@@ -195,34 +196,38 @@ public:
     // Don't remove
     virtual void __remove_test_hook() {}
 
+
     pthread_mutex_t dummy_mutex;
 
     /// for testing only  // TODO: add this func to "ThreadSafeList.h" and make adjustments before the test, don't forget to remove before submit
-    bool isSorted(){
+    bool isSorted() {
         pthread_mutex_lock(&dummy_mutex);
         if(!head) {
             pthread_mutex_unlock(&dummy_mutex);
             return true;
         }else{
-            pthread_mutex_lock(&head->mtx);
-            pthread_mutex_unlock(&dummy_mutex);
+            pthread_mutex_lock(head->mtx);
+            // pthread_mutex_unlock(&dummy_mutex);
         }
         Node* prev = head;
         Node* curr = head->next;
         while(curr) {
-            pthread_mutex_lock(&curr->mtx);
+            pthread_mutex_lock(curr->mtx);
             if(prev->data >= curr->data) {
-                pthread_mutex_unlock(&curr->mtx);
-                pthread_mutex_unlock(&prev->mtx);
+                pthread_mutex_unlock(curr->mtx);
+                pthread_mutex_unlock(prev->mtx);
+                pthread_mutex_unlock(&dummy_mutex);
                 return false;
             }
-            pthread_mutex_unlock(&prev->mtx);
+            pthread_mutex_unlock(prev->mtx);
             prev = curr;
             curr = curr->next;
         }
-        pthread_mutex_unlock(&prev->mtx);
+        pthread_mutex_unlock(prev->mtx);
+        pthread_mutex_unlock(&dummy_mutex);
         return true;
     }
+
 
 private:
     Node* demi_head;

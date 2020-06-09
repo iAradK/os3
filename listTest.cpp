@@ -64,7 +64,7 @@ int generateNum(bool* nums) {
     return num;
 }
 
-int main() {
+int main333() {
     pthread_t threads[MAX_ACTIONS];
     threadArgs args[MAX_ACTIONS];
     bool nums[NUM_RANGE];

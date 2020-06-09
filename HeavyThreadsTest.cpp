@@ -106,7 +106,7 @@ void insert_test_behavior(List<int>* l){
     pthread_mutex_destroy(&results_mutex);
 }*/
 
-int main13() {
+int main() {
     double time_stamp = 0;
     time_t start_time, end_time;
     if(time(&start_time) != -1){
